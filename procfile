@@ -1,0 +1,1 @@
+web: bokeh serve --port=$PORT --allow-websocket-origin=finalproject_kelompok17.herokuapp.com --address=0.0.0.0 --use-xheaders finalproject_kelompok17.py
