@@ -7,6 +7,7 @@ Original file is located at
     https://colab.research.google.com/drive/1T-fB6XZUcWQTlVDyDLq7PtUo3C1htoWf
 """
 
+#Library yang digunakan
 import time
 import pandas as pd
 import numpy as np
@@ -23,14 +24,13 @@ from bokeh.layouts import row, column, grid, gridplot
 from bokeh.models import CustomJS
 from bokeh.models.widgets import Button, Select
 
-#output_file("tubes.html")
 
 iSelect=0           # Index of Select (Afganisthan, dll)
 nSum = [0,0,0,0,0,0,0]
 nMinMax = [0,0,0,0,0,0,0]
 
 # ------------------------------------------------------------------------------
-# Database
+# Dataset
 # ------------------------------------------------------------------------------
 df1=pd.read_csv('https://raw.githubusercontent.com/valiandafh/Tubes-/master/time_series_covid19_confirmed_global.csv')    # Confirmed
 df2=pd.read_csv('https://raw.githubusercontent.com/valiandafh/Tubes-/master/time_series_covid19_recovered_global.csv')    # Recovered
@@ -49,6 +49,7 @@ dCountry=df1['Country']
 dProvince=df1['Province']
 lCountry=dCountry.values.tolist()
 lProvince=dProvince.values.tolist()
+
 # List of Select
 L1 = lCountry
 L2 = lProvince
@@ -62,9 +63,8 @@ mydates=y2.index.values
 nBaris=len(lCountry)-1
 nKolom=len(x1)-1
 
-#print(z1)
 # ------------------------------------------------------------------------------
-# A = Button
+# Button
 # ------------------------------------------------------------------------------
 
 mybtn15 = Button(label="Confirmed = 1176", name="12", width=120)
@@ -72,7 +72,7 @@ mybtn16 = Button(label="Recovered = 166", name="12", width=120)
 mybtn17 = Button(label="Death = 140", name="12", width=120)
 
 # ------------------------------------------------------------------------------
-# B = Peta + Data
+# Data
 # ------------------------------------------------------------------------------
 mydf=df1
 mytitle="Visualisasi Statistik COVID-19"
@@ -81,7 +81,6 @@ y=mydf['Lat']
 z=mydf['Total']
 myC=mydf['Country']
 
-#"""
 mysizes=np.abs(z)
 myWarna=np.abs(z)
 
@@ -108,35 +107,8 @@ for ii in range(len(z)):
     if (z[ii]>0):
       nMin=z[ii]
       iMin=ii
-#Peta  
-# Size of Circle
-for ii in range(len(z)):
-  mysizes[ii]=(5 if (z[ii]<1000) else 
-              (10 if z[ii]<10000 else 
-              (16 if z[ii]<100000 else 
-              (28 if z[ii]<500000 else 
-              42))))
 
-for ii in range(len(z)):
-  myWarna[ii]=(0 if (z[ii]<10) else 
-              (1 if z[ii]<100 else 
-              (3 if z[ii]<1000 else 
-              (5 if z[ii]<10000 else 
-              (7 if z[ii]<100000 else 
-              (9 if z[ii]<500000 else 
-              12))))))
-
-for ii in range(len(z)):
-  if (z[ii]<100): nSum[0]=nSum[0]+1 
-  elif (z[ii]<1000): nSum[1]=nSum[1]+1
-  elif (z[ii]<10000): nSum[2]=nSum[2]+1
-  elif (z[ii]<100000): nSum[3]=nSum[3]+1
-  elif (z[ii]<500000): nSum[4]=nSum[4]+1
-  else: nSum[5]=nSum[5]+1 
-nSum[6]=len(z)
-#print(nSum)
-#print("---------")
-
+#MinMax
 nMinMax[0]=iMin
 nMinMax[1]=nMin
 nMinMax[2]=iMax
@@ -163,8 +135,8 @@ M1 = figure (plot_width=600, plot_height=440,
   title=mytitle, tools=[myhover, 'pan', 'wheel_zoom', 'zoom_in', 'zoom_out','save', 'reset']
 )
 
-mytile_provider = get_provider(Vendors.CARTODBPOSITRON)
 # tile_provider = get_provider(Vendors.STAMEN_TONER_BACKGROUND)
+mytile_provider = get_provider(Vendors.CARTODBPOSITRON)
 
 mybtn21 = Button(label="Min : ", width=250)
 mybtn22 = Button(label="Click here", width=90)
@@ -180,10 +152,8 @@ mybtn22.on_click(myhandler2b)
 
 B22 = row(mybtn21, mybtn22, mybtn23)
 
-#"""
-#B = Button(name="23", width=600)
 # ------------------------------------------------------------------------------
-# C = Select
+# Slider + Select
 # ------------------------------------------------------------------------------
 iSlider = nKolom      # Index of Slider (0-91 days)
 
@@ -204,12 +174,6 @@ def PDailyCase(iNum):
     y3d[i]=y3c[i]-y3c[i-1]
 
 PDailyCase(iSelect)
-#print(x1c)
-#print(y1c)
-#print(y2c)
-#print(x1d)
-#print(y1d)
-#print(y2d)
 
 mybtn31 = Button(label=mydates[nKolom], width=70)
 mybtn32 = Button(label=str(y1d[nKolom]), width=70)
@@ -219,6 +183,7 @@ mybtn34 = Button(label=str(y3d[nKolom]), width=50)
 source3 = ColumnDataSource(data=dict(x1c=x1c, y1c=y1c, y2c=y2c, y3c=y3c))
 source3b = ColumnDataSource(data=dict(x1d=x1d, y1d=y1d, y2d=y2d, y3d=y3d))
 
+#pemberian judul
 plot3 = figure(plot_width=300, plot_height=200, title="Akumulasi Laporan", toolbar_location=None)
 plot3.x_range.start = 0
 plot3.y_range.start = 0
@@ -227,7 +192,7 @@ plot3b = figure(plot_width=300, plot_height=200, title="Laporan Kasus Harian", t
 plot3b.x_range.start = 0
 plot3b.y_range.start = 0
 
-
+#pemberian warna
 r1 = plot3.line('x1c', 'y1c', source=source3, line_width=3, line_color='red')
 r2 = plot3.line('x1c', 'y2c', source=source3, line_width=3, line_color='green')
 r3 = plot3.line('x1c', 'y3c', source=source3, line_width=3, line_color='blue')
@@ -237,14 +202,14 @@ r2b = plot3b.line('x1d', 'y2d', source=source3b, line_width=3, line_color='green
 r3b = plot3b.line('x1d', 'y3d', source=source3b, line_width=3, line_color='blue')
 
 
-# Cek NaN variable
+# Cek NaN variable (Variabel Kosong)
 def isNaN(num):
   return num!= num
 
 for i in range(nBaris):
   L3[i]=(L1[i] if isNaN(L2[i]) else (L1[i]+L2[i]))
 
-# Event : Select
+#Select
 def myhandler3a(attr,old,new):
   iSelect=-1
   for i in range(0, nBaris):
@@ -260,8 +225,7 @@ def myhandler3a(attr,old,new):
   r1.data_source.data["y1c"] = y1c
   r2.data_source.data["y2c"] = y2c
   r3.data_source.data["y3c"] = y3c
-#  print(iSelect)
-#  PDailyCase(iSelect)
+
   for i in range(1, nKolom+1):
     y1d[i]=y1c[i]-y1c[i-1]
     y2d[i]=y2c[i]-y2c[i-1]
@@ -285,14 +249,14 @@ print(y2c[nKolom])
 print(y3c[nKolom])
 
 # ------------------------------------------------------------------------------
-# All = A + B + C 
+# All
 # ------------------------------------------------------------------------------
 A = column(myselect3, mybtn15, mybtn16, mybtn17)
-
+B22 = row(mybtn21, mybtn22, mybtn23)
 C33 = row(mybtn31, mybtn32, mybtn33, mybtn34)
 C = column(plot3, C33, plot3b)
 
-MyLayout = row(A, C)
+MyLayout = row(A, B22, C)
 #show(MyLayout)
 curdoc().add_root(MyLayout)
 curdoc().title = "Visualisasi Statistik COVID-19"
